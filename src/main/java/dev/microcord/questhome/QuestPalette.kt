@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.TypedValue
 import android.widget.Button
 import com.discord.R as HostR
+import com.discord.utilities.theme.ThemeRuntime
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -20,17 +21,28 @@ internal class QuestPalette(context: Context) {
     private val night = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
         Configuration.UI_MODE_NIGHT_YES
 
-    private val page = context.themeColor(HostR.attr.colorBackgroundMobilePrimary)
-        ?: context.themeColor(HostR.attr.colorBackgroundPrimary)
-        ?: if (night) 0xFF202024.toInt() else 0xFFF5F6F8.toInt()
+    private val text = context.themeColor(HostR.attr.colorTextNormal)
+    private val base = questThemeBase(
+        runCatching { ThemeRuntime.activeBase }.getOrNull(),
+        text,
+        night,
+    )
+    private val page = compositeColor(
+        context.themeColor(HostR.attr.colorBackgroundMobilePrimary)
+            ?: context.themeColor(HostR.attr.colorBackgroundPrimary),
+        base,
+    )
 
-    val surface = context.themeColor(HostR.attr.colorBackgroundMobileSecondary)
-        ?: context.themeColor(HostR.attr.colorBackgroundSecondary)
-        ?: blend(page, readableColor(page), 0.04)
+    val surface = compositeColor(
+        context.themeColor(HostR.attr.colorBackgroundMobileSecondary)
+            ?: context.themeColor(HostR.attr.colorBackgroundSecondary),
+        page,
+        blend(page, readableColor(page), 0.04),
+    )
 
-    val ink = accessibleColor(context.themeColor(HostR.attr.colorTextNormal), surface)
+    val ink = accessibleColor(text, surface)
     val muted = accessibleColor(context.themeColor(HostR.attr.colorTextMuted), surface, blend(surface, ink, 0.76))
-    val pageInk = accessibleColor(context.themeColor(HostR.attr.colorTextNormal), page)
+    val pageInk = accessibleColor(text, page)
     val border = blend(surface, ink, 0.18)
     val progress = accessibleColor(context.themeColor(HostR.attr.colorTextLink), surface)
     val regular = context.questFont(HostR.font.whitney_medium, Typeface.NORMAL)
@@ -67,7 +79,7 @@ private fun Context.themeColor(attribute: Int): Int? {
         value.resourceId != 0 -> runCatching { getColorStateList(value.resourceId).defaultColor }.getOrNull()
         else -> null
     }
-    return color?.takeIf { it ushr 24 == 255 }
+    return color
 }
 
 private fun Context.questFont(id: Int, style: Int): Typeface =
@@ -76,9 +88,24 @@ private fun Context.questFont(id: Int, style: Int): Typeface =
     else Typeface.create("sans-serif", style)
 
 internal fun accessibleColor(preferred: Int?, background: Int, fallback: Int? = null): Int =
-    preferred?.takeIf { contrastRatio(it, background) >= 4.5 }
-        ?: fallback?.takeIf { contrastRatio(it, background) >= 4.5 }
+    preferred?.let { compositeColor(it, background) }?.takeIf { contrastRatio(it, background) >= 4.5 }
+        ?: fallback?.let { compositeColor(it, background) }?.takeIf { contrastRatio(it, background) >= 4.5 }
         ?: readableColor(background)
+
+// Microcord's selected theme may differ from Android's system light/dark setting.
+internal fun questThemeBase(appBase: String?, textColor: Int?, systemNight: Boolean): Int {
+    val dark = when {
+        appBase != null -> appBase != "light"
+        textColor != null && textColor ushr 24 != 0 -> luminance(textColor) > 0.5
+        else -> systemNight
+    }
+    return if (dark) 0xFF202024.toInt() else 0xFFF5F6F8.toInt()
+}
+
+// Gradient themes supply translucent surfaces. Flatten them over the selected app base,
+// keeping the plugin's surfaces readable even when Android itself is in light mode.
+internal fun compositeColor(foreground: Int?, background: Int, missing: Int = background): Int =
+    if (foreground == null) missing else blend(background, foreground, (foreground ushr 24) / 255.0)
 
 private fun readableColor(background: Int): Int =
     if (contrastRatio(Color.WHITE, background) >= contrastRatio(Color.BLACK, background)) Color.WHITE else Color.BLACK

@@ -80,6 +80,36 @@ class QuestTest {
     }
 
     @Test
+    fun gradientSurfacesUseMicrocordThemeWhenAndroidUsesTheOppositeMode() {
+        val white = 0xFFFFFFFF.toInt()
+        val black = 0xFF000000.toInt()
+        val darkBase = questThemeBase("darker", white, systemNight = false)
+        val darkPage = compositeColor(0x00000000, darkBase)
+        val darkSurface = compositeColor(0x33000000, darkPage)
+        assertEquals(0xFF202024.toInt(), darkPage)
+        assertEquals(0xFF1A1A1D.toInt(), darkSurface)
+        assertEquals(white, accessibleColor(white, darkSurface))
+        assertTrue(contrastRatio(white, darkSurface) >= 4.5)
+
+        val lightBase = questThemeBase("light", black, systemNight = true)
+        val lightSurface = compositeColor(0x33FFFFFF, lightBase)
+        assertTrue(contrastRatio(black, lightSurface) >= 4.5)
+        assertEquals(black, accessibleColor(black, lightSurface))
+        assertEquals(darkBase, questThemeBase(null, white, systemNight = false))
+        assertEquals(lightBase, questThemeBase(null, black, systemNight = true))
+    }
+
+    @Test
+    fun translucentTextAndOpaqueCustomSurfacesKeepTheirActualContrast() {
+        val dark = 0xFF202024.toInt()
+        val light = 0xFFF5F6F8.toInt()
+        assertEquals(light, compositeColor(light, dark))
+        assertEquals(dark, compositeColor(null, dark))
+        assertEquals(0xFF909092.toInt(), compositeColor(0x80FFFFFF.toInt(), dark))
+        assertTrue(contrastRatio(accessibleColor(0x20FFFFFF, dark), dark) >= 4.5)
+    }
+
+    @Test
     fun readsClaimedCatalogAndRejectsUntrustedAssets() {
         assertTrue(readQuests(FIXTURE, history = true).quests.single().claimed)
         assertNull(questAssetUrl("123", "//another.example/video.mp4"))
