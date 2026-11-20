@@ -32,8 +32,8 @@ android {
         applicationId = "dev.microcord.questhome"
         minSdk = 23
         targetSdk = 36
-        versionCode = 7
-        versionName = "2.2.1"
+        versionCode = 8
+        versionName = "2.3.0"
     }
 
     signingConfigs {

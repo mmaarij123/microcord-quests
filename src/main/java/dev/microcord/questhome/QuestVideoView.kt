@@ -3,6 +3,7 @@
 package dev.microcord.questhome
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.SystemClock
 import android.view.Gravity
@@ -17,6 +18,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
@@ -33,6 +35,18 @@ internal class QuestVideoView(
     private val palette = QuestPalette(context)
     private val playerView = PlayerView(context).apply { useController = false }
     private val buffering = ProgressBar(context)
+    private val timeline = ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal).apply {
+        max = 1_000
+        progressTintList = ColorStateList.valueOf(palette.progress)
+        progressBackgroundTintList = ColorStateList.valueOf(palette.border)
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
+    private val playbackTime = TextView(context).apply {
+        typeface = palette.regular
+        setTextColor(palette.pageInk)
+        textSize = 14f
+        gravity = Gravity.END
+    }
     private val status = TextView(context).apply {
         typeface = palette.regular
         setTextColor(palette.pageInk)
@@ -59,6 +73,7 @@ internal class QuestVideoView(
         override fun run() {
             val active = player ?: return
             if (!wantsPlayback || !hasWindowFocus() || !isShown || !isSameAccount()) return
+            updateTimeline()
             if (active.isPlaying && firstFrame) {
                 capturePosition(active.currentPosition)
                 reportProgress(force = false)
@@ -69,7 +84,12 @@ internal class QuestVideoView(
         }
     }
     private val listener = object : Player.Listener {
+        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+            updateTimeline()
+        }
+
         override fun onPlaybackStateChanged(playbackState: Int) {
+            updateTimeline()
             when (playbackState) {
                 Player.STATE_BUFFERING -> if (wantsPlayback) {
                     buffering.visibility = View.VISIBLE
@@ -106,6 +126,9 @@ internal class QuestVideoView(
             addView(playerView, FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
             addView(buffering, FrameLayout.LayoutParams(dp(36), dp(36), Gravity.CENTER))
         }, LayoutParams(LayoutParams.MATCH_PARENT, dp(224)))
+        addView(timeline, LayoutParams(LayoutParams.MATCH_PARENT, dp(8)).apply { topMargin = dp(8) })
+        addView(playbackTime)
+        updateTimeline()
         addView(status)
         addView(control)
         status.text = "Loading video…"
@@ -225,17 +248,34 @@ internal class QuestVideoView(
     private fun pausePlayback() {
         wantsPlayback = false
         player?.pause()
+        updateTimeline()
         removeCallbacks(ticker)
         removeCallbacks(startupDeadline)
         buffering.visibility = View.GONE
         control.text = "Play"
-        status.text = "Paused · ${duration(reported)} synced"
+        status.text = "Paused"
     }
 
     private fun showPlaying() {
         buffering.visibility = View.GONE
         status.text = if (completed) "Quest completed. Go back to claim the reward."
-        else "Playing · ${duration(reported)} synced"
+        else "Playing"
+    }
+
+    private fun updateTimeline() {
+        val active = player
+        val total = active?.duration?.takeIf { it > 0 }
+        val position = active?.currentPosition?.coerceAtLeast(0) ?: watched.seconds * 1_000L
+        val elapsed = when {
+            total == null -> position
+            active.playbackState == Player.STATE_ENDED -> total
+            else -> position.coerceAtMost(total)
+        }
+        timeline.progress = if (total == null) 0 else (elapsed.toDouble() / total * timeline.max).toInt()
+        val elapsedLabel = duration((elapsed / 1_000).toInt())
+        val totalLabel = total?.let { duration((it / 1_000).toInt()) } ?: "–:––"
+        val label = "$elapsedLabel / $totalLabel"
+        if (playbackTime.text.toString() != label) playbackTime.text = label
     }
 
     private fun finishPlayback() {
@@ -286,7 +326,7 @@ internal class QuestVideoView(
             } else if (player?.isPlaying == true && firstFrame) {
                 showPlaying()
             } else if (!wantsPlayback) {
-                status.text = "Paused · ${duration(reported)} synced"
+                status.text = "Paused"
             }
         }
     }
