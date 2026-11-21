@@ -1,19 +1,17 @@
 # Third-party notices
 
-## Discord Quests icon
+## Discord Quests artwork
 
-The laurel in `assets/quests.svg` and `src/main/res/drawable/ic_quests.xml` is Discord’s Quests icon, sourced from Discord’s public web client. The Android drawable contains the same vector path.
+The Discord Quests laurel comes from Discord’s public web client. The repository keeps the SVG at `assets/quests.svg` and packages the same vector path as `src/main/res/drawable/ic_quests.xml`. Discord Inc. retains rights to its artwork and marks. Images and videos delivered by Discord during use remain subject to their respective rights holders’ terms.
 
-Discord’s artwork and trademarks remain the property of Discord Inc. They retain their applicable terms. The project’s MIT license covers the original plugin code.
+## ExoPlayer
 
-## Microcord plugin template and API
+The APK includes the ExoPlayer HLS module from ExoPlayer 2.19.1 under Apache License 2.0. Microcord supplies the ExoPlayer core and UI classes used at runtime. [ExoPlayer 2.19.1 license](https://github.com/google/ExoPlayer/blob/r2.19.1/LICENSE)
 
-The project began with the [Microcord plugin template](https://github.com/microcord/plugin-template). Microcord’s Plugin API is a compile-only dependency supplied by the installed host app. Microcord’s source retains its upstream licensing.
+## Microcord
+
+The project follows the Microcord plugin template and compiles against the Microcord Plugin SDK. Microcord supplies its APIs at runtime. Its host source is distributed under the GNU Affero General Public License version 3. [Microcord plugin template](https://github.com/microcord/plugin-template) · [Microcord host license](https://github.com/microcord/microcord/blob/master/LICENSE)
 
 ## Gradle Wrapper
 
-The Gradle Wrapper scripts and JAR originate from [Gradle](https://github.com/gradle/gradle) and retain the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). Copyright Gradle contributors.
-
-## Runtime libraries
-
-The APK includes the ExoPlayer HLS extension under [Apache License 2.0](https://github.com/google/ExoPlayer/blob/r2.19.1/LICENSE). Other declared runtime APIs are supplied by Microcord. Libraries retain their respective licenses.
+The wrapper scripts and JAR come from Gradle and use Apache License 2.0. The JAR includes the license text at `META-INF/LICENSE`. [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)

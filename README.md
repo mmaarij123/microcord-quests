@@ -34,4 +34,6 @@ The plugin is built with Kotlin and Java against Microcord Plugin API `1.0.6`. I
 
 ## License
 
-Original plugin code is available under the [MIT License](LICENSE), copyright Maarij. Discord artwork, trademarks, Gradle Wrapper, and dependencies retain their applicable licenses. See [third-party notices](THIRD_PARTY_NOTICES.md).
+The original Discord Quests plugin code is licensed under MIT. Copyright © 2026 Maarij. You may use, copy, modify, and redistribute the code, including for commercial use. Include the copyright notice and permission notice with copies or substantial portions of the code. The code is provided as is, without warranty. The full terms include a limitation of liability. [Read the MIT license](LICENSE)
+
+See the notices for the Discord Quests icon, the ExoPlayer HLS module included in the APK, and the upstream build tools. [Third-party notices](THIRD_PARTY_NOTICES.md)
