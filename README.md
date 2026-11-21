@@ -1,28 +1,36 @@
 # Discord Quests for Microcord
 
-[Download the latest APK](https://github.com/mmaarij123/microcord-quests/releases/latest) · [Microcord](https://github.com/microcord/microcord) · [Plugin template](https://github.com/microcord/plugin-template)
+Browse quests, watch eligible videos, and claim rewards from a dedicated Quests screen in Microcord’s User Settings.
 
-Browse current quests, see requirements and server-recorded progress, accept a quest, play eligible mobile quest videos, claim completed rewards, and view claimed reward codes inside Microcord. The plugin uses the signed-in Microcord session and its existing verification flow.
+## What you can do
 
-The Quests header shows the account’s Orbs balance. Cards show their advertised Orbs reward, and claim confirmations show the credited amount when Discord supplies it. The native player prefers the smaller video and can switch to another available stream if playback stalls during startup.
+- Browse **Current** and **Claimed** quests. Quest cards show round icons, deadlines, rewards, requirements, and task progress.
+- Tap **Accept quest** to join an available quest. Eligible mobile video quests play inside Microcord with play and pause controls, a progress bar, and elapsed and total time.
+- Check your **Orbs** balance next to the Quests heading and see how many Orbs each eligible quest offers. When Discord provides the credited amount, the claim confirmation shows how many Orbs you earned.
+- Claim completed rewards and open reward codes from the **Claimed** tab when available.
 
-Discord determines eligibility and tracks desktop play, desktop streaming, and linked-game tasks on their supported platforms. The Quests page displays that progress when you refresh. [Discord Quests FAQ](https://support.discord.com/hc/en-us/articles/22225719947543-Discord-Quests-FAQ)
+Complete desktop, streaming, and linked-game tasks on their supported platforms. Tap **Refresh** to see the progress Discord recorded.
 
-## Install
+## Install from GitHub Releases
 
-1. If you installed Discord Quests v2.3.0 or earlier, uninstall that copy before installing the new APK. Version 2.3.1 uses the Android package `io.github.mmaarij123.quests`. Install the new APK on the same Android device as Microcord.
-2. Open **Microcord Settings → Plugins** and enable **Discord Quests**. Approve the plugin when prompted.
-3. Open **User Settings** and tap the Quests laurel beside Search. You can also open **Plugins → Discord Quests → Settings → Quests**.
+1. Open the [latest GitHub release](https://github.com/mmaarij123/microcord-quests/releases/latest) and download **`microcord-quests.apk`** under **Assets**.
+2. Install the APK on the Android device where Microcord is installed. If you have v2.3.0 or earlier, uninstall the old Discord Quests plugin first.
+3. In **Microcord Settings → Plugins**, enable **Discord Quests** and approve it when prompted.
+4. Open **User Settings** and tap the Quests laurel beside **Search**. You can also open **Plugins → Discord Quests → Settings → Quests**.
 
-The toolbar uses the Discord Quests SVG in `assets/quests.svg`, packaged as an Android vector drawable.
+## Build from source
 
-## Build
+Install JDK 21 and Android SDK Platform 36.1. Clone this repository and run the Gradle wrapper from its root.
 
-Use JDK 21 and Android SDK Platform 36.1. From the project root, run `bash ./gradlew assembleDebug` (Windows PowerShell: `.\gradlew.bat assembleDebug`). Find the debug APK under `build/outputs/apk/debug/`.
+```bash
+bash ./gradlew assembleDebug testDebugUnitTest lintDebug
+```
 
-The project uses Microcord Plugin API `1.0.6`. The optional `keystore.properties.example` documents the release-signing configuration.
+On Windows PowerShell, run `.\gradlew.bat assembleDebug testDebugUnitTest lintDebug`.
 
-Run `testDebugUnitTest lintDebug` to check the quest parser, request routing, and playback progress. The transport integration relies on the current Microcord build exposing its Retrofit-based REST service. Discord’s client Quest endpoints may change.
+The APK is generated at `build/outputs/apk/debug/MicrocordQuestHome-debug.apk`. For a signed release build, copy [`keystore.properties.example`](keystore.properties.example) to `keystore.properties`, fill in your signing details, and run `assembleRelease` with the same wrapper.
+
+The plugin is built with Kotlin and Java against Microcord Plugin API `1.0.6`. It uses Microcord’s signed-in REST client for quest requests and ExoPlayer for mobile video playback. The Android package is `io.github.mmaarij123.quests`.
 
 ## License
 
