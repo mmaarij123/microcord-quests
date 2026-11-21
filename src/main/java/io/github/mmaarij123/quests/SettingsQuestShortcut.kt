@@ -1,4 +1,4 @@
-package dev.microcord.questhome
+package io.github.mmaarij123.quests
 
 import android.app.Activity
 import android.app.Application

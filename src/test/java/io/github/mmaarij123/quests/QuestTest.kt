@@ -1,4 +1,4 @@
-package dev.microcord.questhome
+package io.github.mmaarij123.quests
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser

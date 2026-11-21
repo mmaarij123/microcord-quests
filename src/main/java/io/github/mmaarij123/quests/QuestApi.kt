@@ -1,4 +1,4 @@
-package dev.microcord.questhome
+package io.github.mmaarij123.quests
 
 import com.discord.utilities.rest.RestAPI
 import com.google.gson.JsonObject

@@ -12,7 +12,7 @@ val releaseSigning = Properties().apply {
 
 manticordPlugin {
     id.set("microcord.questhome")
-    entrypoint.set("dev.microcord.questhome.QuestHomePlugin")
+    entrypoint.set("io.github.mmaarij123.quests.QuestHomePlugin")
     description.set("Browse and manage Discord Quests in Microcord Settings")
     manticordVersionMinimum.set(1)
     manticordVersionMaximumExclusive.set(2)
@@ -21,7 +21,7 @@ manticordPlugin {
 }
 
 android {
-    namespace = "dev.microcord.questhome"
+    namespace = "io.github.mmaarij123.quests"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -29,11 +29,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.microcord.questhome"
+        applicationId = "io.github.mmaarij123.quests"
         minSdk = 23
         targetSdk = 36
-        versionCode = 8
-        versionName = "2.3.0"
+        versionCode = 9
+        versionName = "2.3.1"
     }
 
     signingConfigs {

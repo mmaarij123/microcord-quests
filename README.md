@@ -10,7 +10,7 @@ Discord determines eligibility and tracks desktop play, desktop streaming, and l
 
 ## Install
 
-1. Install the plugin APK on the same Android device as Microcord. It updates the earlier Quests plugin with the same package ID and signer.
+1. If you installed Discord Quests v2.3.0 or earlier, uninstall that copy before installing the new APK. Version 2.3.1 uses the Android package `io.github.mmaarij123.quests`. Install the new APK on the same Android device as Microcord.
 2. Open **Microcord Settings → Plugins** and enable **Discord Quests**. Approve the plugin when prompted.
 3. Open **User Settings** and tap the Quests laurel beside Search. You can also open **Plugins → Discord Quests → Settings → Quests**.
 

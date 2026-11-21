@@ -1,4 +1,4 @@
-package dev.microcord.questhome
+package io.github.mmaarij123.quests
 
 import android.content.Context
 import android.content.res.ColorStateList

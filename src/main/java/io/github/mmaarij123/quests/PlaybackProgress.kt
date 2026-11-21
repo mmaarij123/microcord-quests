@@ -1,4 +1,4 @@
-package dev.microcord.questhome
+package io.github.mmaarij123.quests
 
 internal class PlaybackProgress(resumeSeconds: Int) {
     private var position = resumeSeconds.toLong() * 1_000L
